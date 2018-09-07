@@ -9,7 +9,7 @@ power n m
     | m == 0 = 1
     | otherwise = power n (m-1) * n
     
-    
+
 prod :: Int-> Int -> Int 
 prod n m
     | n == 0 = 0
@@ -66,11 +66,31 @@ slowFib n
     | otherwise = slowFib(n-1) + slowFib(n-2)
 
 
-remove :: [Int] -> [Int] -> [Int]
+
+quickFib :: Integer -> Integer
+quickFib n = fst (quickFib' n)
+
+quickFib' :: Integer -> (Integer, Integer)
+quickFib' 0 = (0, 1)
+quickFib' 1 = (1, 1)
+quickFib' n = (seg, seg + res)
+    where (res, seg) = quickFib' (n-1)
 
 
-flatten :: [[Int]] -> [Int] 
 
 oddsNevens :: [Int] -> ([Int], [Int])
+oddsNevens [] = ([], [])
+oddsNevens (x:xs)
+    |mod x 2 == 1   = (x:a,b)
+    |otherwise      = (a,x:b) 
+    where (a,b) = oddsNevens xs
 
 primeDivisors :: Int -> [Int]
+primeDivisors n
+    |isPrime n == True  = [n]
+    |
+
+
+---remove :: [Int] -> [Int] -> [Int]
+
+--flatten :: [[Int]] -> [Int] 
