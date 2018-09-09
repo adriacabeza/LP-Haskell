@@ -85,13 +85,6 @@ oddsNevens (x:xs)
     |otherwise      = (a,x:b) 
     where (a,b) = oddsNevens xs
 
--- primeDivisors :: Int -> [Int]
--- primeDivisors 1 = []
--- primeDivisors n
---     |isPrime n == True  = [n]
---     |
-
-
 aux_remove :: [Int] -> Int ->[Int]
 aux_remove (x:xs) y
     | x == y    = aux_remove xs y
@@ -109,3 +102,16 @@ flatten [] = []
 flatten (x:xs) = x ++ flatten(xs)
 
 
+primeDivisors :: Int -> [Int]
+primeDivisors 1 = []
+primeDivisors n
+    |isPrime n == True  = [n]
+    |otherwise  = divisors n 2
+
+
+divisors :: Int -> Int-> [Int]
+divisors n c
+    | c == n     = []
+    | mod n c == 0 &&  isPrime c  = [c] ++ divisors n (c + 1)
+    | otherwise = divisors n (c + 1)
+    
