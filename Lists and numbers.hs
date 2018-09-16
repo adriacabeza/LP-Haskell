@@ -56,9 +56,13 @@ girallista :: [Int] -> [Int]
 girallista [x] = [x]
 girallista(x:xs) =  girallista xs ++ [x] 
 
+buildPalindrome2 :: [Int] -> [Int]
+buildPalindrome2 x = girallista x ++ x
+
 buildPalindrome :: [Int] -> [Int]
-buildPalindrome x = girallista x ++ x
- 
+buildPalindrome l = reverse l ++ l
+
+
 slowFib :: Int -> Int 
 slowFib n
     | n == 0    = 0
