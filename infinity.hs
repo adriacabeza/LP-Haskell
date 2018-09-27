@@ -43,7 +43,7 @@ push :: a -> Queue a -> Queue a
 push x (Queue b c) = Queue b (x:c)
 
 pop :: Queue a -> Queue a
-pop (Queue [] b) = Queue (reverse(b)++[]) []
+pop (Queue [] b) = pop Queue (reverse(b)++[]) []
 pop (Queue (x:xs) c) = Queue xs c 
 
 top :: Queue a -> a
