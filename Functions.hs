@@ -28,11 +28,11 @@ myReverse x = foldl (flip (:)) [] x
 -- myReverse a = foldr (\x y -> y++[x]) [] a
 
 countIn :: [[Int]] -> Int -> [Int] 
-countIn a b = map (+) (countIn' a) 
-    where countIn' = length (filter (==b))  
+countIn l x = map (length) $ map (filter (== x)) l
     
 
--- irstWord :: String -> String 
+firstWord :: String -> String 
+firstWord text = takeWhile (/= ' ') $ dropWhile (== ' ') text
 
 ones :: [Integer]
 ones = 1:ones
