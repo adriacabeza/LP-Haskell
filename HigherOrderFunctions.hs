@@ -71,8 +71,6 @@ pam x fs = [ map f x | f <-fs]
 pam2 :: [Int] -> [Int -> Int] -> [[Int]]
 pam2 l f = map (\x -> map (\fx -> fx x) f) l
 
-
-
 filterFoldl :: (Int -> Bool) -> (Int -> Int -> Int) -> Int -> [Int] -> Int 
 filterFoldl f fx x l = foldl fx x (filter f l)
 
