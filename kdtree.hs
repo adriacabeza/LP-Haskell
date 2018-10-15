@@ -58,14 +58,20 @@ binarytoNum (x:xs) = x * 2^((length xs)) + binarytoNum xs
 
 
 
+data Kd2nTree a = Node a [Int] (Kd2nTree a) | Empty
 
--- -- per crear un kd 2^n Tree ens donaran una llista de parells 
--- --que contenen dues llistes, la primera són les coordenades
--- -- i la segona és la llista de coordenades que s'usarà per 
--- -- distribuir els següents punts entre els seus fills
--- data Kd2nTree =  [  ( [Double] , [Double] )  ]
--- -- en algunes operacions ens caldrà que aquest tipus
--- -- sigui de la classe Point o de la Show
+-- exampleSet :: Kd2nTree Point3d 
+-- exampleSet = build [(Point3d [3.0,1.0,2.1],[1,3]),(Point3d [3.5,2.8,3.1],[1,2]),(Point3d [3.5,0.0,2.1],[3]),(Point3d [3.0,1.7,3.1],[1,2,3]), (Point3d [3.0,5.1,0.0],[2]),(Point3d [1.5,8.0,1.5],[1]),(Point3d [3.3,2.8,2.5],[3]),(Point3d [4.0,5.1,3.8],[2]), (Point3d [3.1,3.8,4.8],[1,3]),(Point3d [1.8,1.1,2.0],[1,2])]
 
+--pensar pq l'enunciat diu que la igualtat estructural no val ja que dos conjunts són iguals si contenen els mateixos punts
+instance Eq a => Eq (Kd2nTree a) where
+    Empty == Empty  =True
+    _ == Empty  =False
+    Empty == _  = False
+    (Node x l f) == (Node y k g) = (x == y && l == k && f == g)
+
+instance Show a => Show (Kd2nTree a) where
+    show Empty = ""
+    show (Node a l f) = "("++ show(a)++") " ++ show(l) ++ "\n" -- ++ show2 f
 
 
