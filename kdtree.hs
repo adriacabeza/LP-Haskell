@@ -63,12 +63,10 @@ binarytoNum (x:xs) = x * 2^((length xs)) + binarytoNum xs
 data Kd2nTree a = Node a [Int] [Kd2nTree a] | Empty
 
 --pensar pq l'enunciat diu que la igualtat estructural no val ja que dos conjunts són iguals si contenen els mateixos punts
--- instance Eq a => Eq (Kd2nTree a) where
-    -- --si que has de mirar que sigui el mateix conjunt 
-    -- Empty == Empty  =True
-    -- _ == Empty  =False
-    -- Empty == _  = False
-    -- (Node x l f) == (Node y k g) = (x == y && l == k && f == g)
+instance (Point a, Eq a) => Eq (Kd2nTree a) where
+    --si que has de mirar que sigui el mateix conjunt 
+    Empty == Empty  =True
+    n == m = length(get_all n) == length(get_all m) && all (contains n) (map (fst) (get_all m))
 
 instance Show a => Show (Kd2nTree a) where
     show Empty = ""
@@ -110,23 +108,24 @@ insert' t [] = t
 insert' t ((p,l1):ls) =  insert' (insert t p l1) ls
 
 
---mirar com passar els doubles del first a punts i passar al build
+
 buildIni :: Point p =>[([Double],[Int])]-> Kd2nTree p
 buildIni [] = Empty
-buildIni [(x,y)] =build  (map (list2Point) x)  y
+buildIni x =build (zip (map (list2Point) (map (fst) x))  (map (snd) x)  )
 
 
---en el cas que sigui empty m no funciona TODO: arreglar
--- contains:: (Eq p, Point p) => Kd2nTree p-> p -> Bool
--- contains Empty _ = False
--- contains (Node a l []) p = if (a == p) then True else False
--- contains (Node a l f) p 
---     | m == p    = True
---     | otherwise =(contains (f !! (child a p l)) p)
---     where (Node m t r) 
---         | (f !! (child a p l)) == Empty = Empty
---         | otherwise = f !! (child a p l)
-     
+
+contains:: (Eq p, Point p) => Kd2nTree p-> p -> Bool
+contains Empty _ = False
+contains (Node a l f) p = (a==p) || contains (f !! (child a p l)) p
+    
 
 exampleSet :: Kd2nTree Point3d 
 exampleSet = build [(Point3d[3.0,-1.0,2.1],[1,3]),(Point3d[3.5,2.8,3.1],[1,2]),(Point3d[3.5,0.0,2.1],[3]),(Point3d[3.0,-1.7,3.1],[1,2,3]), (Point3d[3.0,5.1,0.0],[2]),(Point3d[1.5,8.0,1.5],[1]),(Point3d[3.3,2.8,2.5],[3]),(Point3d[4.0,5.1,3.8],[2]), (Point3d[3.1,3.8,4.8],[1,3]),(Point3d[1.8,1.1,-2.0],[1,2])]
+
+
+exampleSet2 :: Kd2nTree Point3d
+exampleSet2 = buildIni [([3.0,-1.0,2.1],[1,3]),([3.5,2.8,3.1],[1,2]),([3.5,0.0,2.1],[3]),([3.0,-1.7,3.1],[1,2,3]), ([3.0,5.1,0.0],[2]),([1.5,8.0,1.5],[1]),([3.3,2.8,2.5],[3]),([4.0,5.1,3.8],[2]), ([3.1,3.8,4.8],[1,3]),([1.8,1.1,-2.0],[1,2])] 
+
+remove :: Point p => Kd2nTree p ->p -> Kd2nTree p 
+remove Empty _ = Empty
