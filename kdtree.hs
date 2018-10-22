@@ -23,6 +23,8 @@ class Point p where
     --compara dos coordenades de dos punts i si la segona és mes gran que la primera dóna 1 i sinó 0
     comp:: p -> p -> Int -> Int
 
+    -- aplica una translació a un element de tipus p
+    ptrans:: p->[Double]-> p
 
 --feu que sigui instance d'aquesta classe, cosa que us obligarà
 -- a definir les quatre funcions anteriors.
@@ -47,6 +49,8 @@ instance Point Point3d where
     
     list2Point l = Point3d l
 
+    ptrans (Point3d p) x = Point3d (zipWith (+) p x)
+
 instance Show Point3d where
     --separar el x i l xs i fer que la com
     show (Point3d x) =   "(" ++ init((concatMap (\x -> (show x) ++ ",") x)) ++ ")"
@@ -62,7 +66,6 @@ binarytoNum (x:xs) = x * 2^((length xs)) + binarytoNum xs
 
 data Kd2nTree a = Node a [Int] [Kd2nTree a] | Empty
 
---pensar pq l'enunciat diu que la igualtat estructural no val ja que dos conjunts són iguals si contenen els mateixos punts
 instance (Point a, Eq a) => Eq (Kd2nTree a) where
     --si que has de mirar que sigui el mateix conjunt 
     Empty == Empty  =True
@@ -75,7 +78,9 @@ instance Show a => Show (Kd2nTree a) where
 show2:: Show a => [Kd2nTree a] -> Int -> Int -> String
 show2 [] _  _= ""
 show2 (Empty:as) x tabs= (show2 as (x+1) tabs)
-show2 ((Node a l f):as) x tabs= concat(replicate tabs "    ")  ++ "<" ++ (show x) ++ "> "  ++ (show a) ++ " " ++ (show l)  ++ "\n"++ (show2 f 0 (tabs+1)) ++ (show2 as (x+1) tabs)
+show2 ((Node a l f):as) x tabs= concat(replicate tabs "    ")  ++ "<" ++ (show x) ++ "> "  
+                                ++ (show a) ++ " " ++ (show l)  ++ "\n"
+                                ++ (show2 f 0 (tabs+1))  ++ (show2 as (x+1) tabs)
 
 
 size::Point p => Kd2nTree p -> Int
@@ -127,5 +132,38 @@ exampleSet = build [(Point3d[3.0,-1.0,2.1],[1,3]),(Point3d[3.5,2.8,3.1],[1,2]),(
 exampleSet2 :: Kd2nTree Point3d
 exampleSet2 = buildIni [([3.0,-1.0,2.1],[1,3]),([3.5,2.8,3.1],[1,2]),([3.5,0.0,2.1],[3]),([3.0,-1.7,3.1],[1,2,3]), ([3.0,5.1,0.0],[2]),([1.5,8.0,1.5],[1]),([3.3,2.8,2.5],[3]),([4.0,5.1,3.8],[2]), ([3.1,3.8,4.8],[1,3]),([1.8,1.1,-2.0],[1,2])] 
 
-remove :: Point p => Kd2nTree p ->p -> Kd2nTree p 
+remove :: (Point p,Eq p) => Kd2nTree p ->p -> Kd2nTree p 
 remove Empty _ = Empty
+remove (Node a l f) p 
+    | (a==p)    =  build (concatMap (get_all) f)
+    | not (contains (l1) p)  = (Node a l f)
+    | otherwise = Node a l ((take (fill) f) ++ [remove l1 p] ++ (drop (fill+1) f))
+    where 
+        fill = child a p l
+        l1= head (drop fill f)
+
+
+-- donat un Kd2nTree (no buit) i un punt, ens diu quin és el punt més proper
+-- que pertany al conjunt
+-- nearest ::(Point p) => Kd2nTree p -> p -> p
+
+
+-- allinInterval:: (Point p) -> Kd2nTree p -> p -> p -> [p]
+-- allinInterval 
+
+class Functor f where 
+    translation:: Point t => [Double] -> Kd2nTree t -> Kd2nTree t
+
+
+instance Functor Kd2nTree where
+    fmap f Empty = Empty 
+    fmap f (Node a l h) = (Node (f a) l (map (fmap f) h))
+
+
+    translation l a = (fmap (ptrans l) a )  
+
+
+
+
+-- instance Monad Kd2nTree where 
+--     kfilter::Point p=> (p->Bool)-> Kd2nTree p -> Kd2nTree p
