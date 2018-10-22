@@ -24,7 +24,7 @@ class Point p where
     comp:: p -> p -> Int -> Int
 
     -- aplica una translació a un element de tipus p
-    ptrans:: p->[Double]-> p
+    ptrans::[Double]->p -> p
 
 --feu que sigui instance d'aquesta classe, cosa que us obligarà
 -- a definir les quatre funcions anteriors.
@@ -49,7 +49,7 @@ instance Point Point3d where
     
     list2Point l = Point3d l
 
-    ptrans (Point3d p) x = Point3d (zipWith (+) p x)
+    ptrans x (Point3d p)  = Point3d (zipWith (+) p x)
 
 instance Show Point3d where
     --separar el x i l xs i fer que la com
@@ -145,25 +145,23 @@ remove (Node a l f) p
 
 -- donat un Kd2nTree (no buit) i un punt, ens diu quin és el punt més proper
 -- que pertany al conjunt
--- nearest ::(Point p) => Kd2nTree p -> p -> p
+nearest ::(Point p) => Kd2nTree p -> p -> p
 
 
 -- allinInterval:: (Point p) -> Kd2nTree p -> p -> p -> [p]
 -- allinInterval 
 
-class Functor f where 
-    translation:: Point t => [Double] -> Kd2nTree t -> Kd2nTree t
-
+  
 
 instance Functor Kd2nTree where
     fmap f Empty = Empty 
     fmap f (Node a l h) = (Node (f a) l (map (fmap f) h))
 
-
-    translation l a = (fmap (ptrans l) a )  
-
-
+translation:: Point t => [Double] -> Kd2nTree t -> Kd2nTree t
+translation l a = (fmap (ptrans l) a )  
 
 
 -- instance Monad Kd2nTree where 
---     kfilter::Point p=> (p->Bool)-> Kd2nTree p -> Kd2nTree p
+-- kfilter::Point p=> (p->Bool)-> Kd2nTree p -> Kd2nTree p
+-- kfilter f t = 
+--idea 1 es fer funcio auxiliar passant f i passar tot el node i si el punt lo cumple també passes la seva llista 
