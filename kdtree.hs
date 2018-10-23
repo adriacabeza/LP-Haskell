@@ -145,7 +145,8 @@ remove (Node a l f) p
 
 -- donat un Kd2nTree (no buit) i un punt, ens diu quin és el punt més proper
 -- que pertany al conjunt
-nearest ::(Point p) => Kd2nTree p -> p -> p
+-- nearest ::(Point p) => Kd2nTree p -> p -> p
+
 
 
 -- allinInterval:: (Point p) -> Kd2nTree p -> p -> p -> [p]
@@ -161,7 +162,11 @@ translation:: Point t => [Double] -> Kd2nTree t -> Kd2nTree t
 translation l a = (fmap (ptrans l) a )  
 
 
--- instance Monad Kd2nTree where 
--- kfilter::Point p=> (p->Bool)-> Kd2nTree p -> Kd2nTree p
--- kfilter f t = 
+instance Monad Kd2nTree where 
+kfilter::Point p=> (p->Bool)-> Kd2nTree p -> Kd2nTree p
+kfilter f Empty = Empty 
+kfilter f (Node a l t)
+	| f a	= build  ( [(a,f) ++ kfilter f t])
+--	| not(f a) = build concatMap( (kfilter) t f)     
 --idea 1 es fer funcio auxiliar passant f i passar tot el node i si el punt lo cumple també passes la seva llista 
+-- gotta think a way to implement it with Monads
