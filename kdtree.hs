@@ -1,22 +1,23 @@
 
 class Point p where 
--- donat un número que indica la coordenada i un element de tipus p retorna el valor de la coordenada 
+    -- donat un número que indica la coordenada i un element de tipus p retorna el valor de la coordenada 
     sel :: Int -> p -> Double
+    --TODO: mirar si aixo pot ser 0
 
--- donat un element de tipus p retorna la seva dimensió
+    -- donat un element de tipus p retorna la seva dimensió
     dim:: p -> Int
 
 
--- donat dos elements e1 i e2 de tipus p que representen punts
--- i una llista de coordenades seleccionades retorna el número
--- fill de e2 que li toca a e1
+    -- donat dos elements e1 i e2 de tipus p que representen punts
+    -- i una llista de coordenades seleccionades retorna el número
+    -- fill de e2 que li toca a e1
     child:: p-> p-> [Int]->Int
 
--- donats dos elements e1 i e2 de tipus p ens retorna un Double que 
--- és la distància entre e1 i e2
+    -- donats dos elements e1 i e2 de tipus p ens retorna un Double que 
+    -- és la distància entre e1 i e2
     dist:: p->  p -> Double
 
---rep una llista de double i retorna un element de tipus p
+    --rep una llista de double i retorna un element de tipus p
     list2Point:: [Double]-> p 
 
 
@@ -26,10 +27,8 @@ class Point p where
     -- aplica una translació a un element de tipus p
     ptrans::[Double]->p -> p
 
---feu que sigui instance d'aquesta classe, cosa que us obligarà
--- a definir les quatre funcions anteriors.
--- posteriorment haurem de fer que sigui de la classe Eq i de la
--- -- classe Show.
+
+
 data Point3d = Point3d [Double]
     deriving (Eq)
 
@@ -52,12 +51,12 @@ instance Point Point3d where
     ptrans x (Point3d p)  = Point3d (zipWith (+) p x)
 
 instance Show Point3d where
-    --separar el x i l xs i fer que la com
-    show (Point3d x) =   "(" ++ init((concatMap (\x -> (show x) ++ ",") x)) ++ ")"
+    show ( Point3d (x:xs) ) = "(" ++ (show x) ++ (concatMap(\x -> "," ++ (show x)) xs)  ++ ")"
+ -- show (Point3d x) =   "(" ++ init((concatMap (\x -> (show x) ++ ",") x)) ++ ")"
 
    
 
-  --funció auxiliar
+--funció auxiliar que converteix una llista de 0 i 1 (representació binària) al seu valor enter
 binarytoNum:: [Int] -> Int
 binarytoNum [x] = x 
 binarytoNum (x:xs) = x * 2^((length xs)) + binarytoNum xs
@@ -143,16 +142,35 @@ remove (Node a l f) p
         l1= head (drop fill f)
 
 
--- donat un Kd2nTree (no buit) i un punt, ens diu quin és el punt més proper
--- que pertany al conjunt
--- nearest ::(Point p) => Kd2nTree p -> p -> p
+nearest ::(Point p) => Kd2nTree p -> p -> p
+nearest t p =  minim (tots) (tots !! 0) p
+        where 
+            tots =  map (fst) (get_all t)
+            minim :: (Point p) => [p] -> p -> p -> p
+            minim [] min _ = min
+            minim (t:ts) min punt
+                | (dist punt t) < (dist punt min)  = minim ts t punt
+                | otherwise = minim ts min punt
+
+        
+   
 
 
+allinInterval:: Point p => Kd2nTree p -> p -> p -> [p]
+allinInterval t pmin pmax =  filter (interval pmin pmax) (map (fst) (get_all t))
+        where 
+        interval:: Point p => p -> p -> p-> Bool
+        interval pmin pmax punt = (comprova pmin punt 0) && (comprova punt pmax 0)
+                
 
--- allinInterval:: (Point p) -> Kd2nTree p -> p -> p -> [p]
--- allinInterval 
+-- compara lexicogràficament les coordenades d'un punt i si el primer és més petit que el segon dóna TRUE
+comprova :: Point p=> p -> p -> Int -> Bool
+comprova e1 e2 n 
+    | n == (dim e1) = False
+    | (sel n e1) < (sel n e2) =True
+    | (sel n e1) == (sel n e2) = (comprova e1 e2 (n+1))
+    | otherwise = False 
 
-  
 
 instance Functor Kd2nTree where
     fmap f Empty = Empty 
@@ -162,11 +180,11 @@ translation:: Point t => [Double] -> Kd2nTree t -> Kd2nTree t
 translation l a = (fmap (ptrans l) a )  
 
 
-instance Monad Kd2nTree where 
-kfilter::Point p=> (p->Bool)-> Kd2nTree p -> Kd2nTree p
-kfilter f Empty = Empty 
-kfilter f (Node a l t)
-	| f a	= build  ( [(a,f) ++ kfilter f t])
+--instance Monad Kd2nTree where 
+--kfilter::Point p=> (p->Bool)-> Kd2nTree p -> Kd2nTree p
+--kfilter f Empty = Empty 
+--kfilter f (Node a l t)
+--	| f a	= build  ( [(a,f) ++ kfilter f t])
 --	| not(f a) = build concatMap( (kfilter) t f)     
 --idea 1 es fer funcio auxiliar passant f i passar tot el node i si el punt lo cumple també passes la seva llista 
 -- gotta think a way to implement it with Monads
