@@ -1,3 +1,5 @@
+import Control.Applicative
+import Control.Monad
 
 class Point p where 
     -- donat un número que indica la coordenada i un element de tipus p retorna el valor de la coordenada 
@@ -27,6 +29,8 @@ class Point p where
     -- aplica una translació a un element de tipus p
     ptrans::[Double]->p -> p
 
+    prova::p-> Bool
+
 
 
 data Point3d = Point3d [Double]
@@ -49,6 +53,10 @@ instance Point Point3d where
     list2Point l = Point3d l
 
     ptrans x (Point3d p)  = Point3d (zipWith (+) p x)
+
+    prova (Point3d x)
+        |(x !! 0)>1.5  = True
+        |otherwise     =False
 
 instance Show Point3d where
     show ( Point3d (x:xs) ) = "(" ++ (show x) ++ (concatMap(\x -> "," ++ (show x)) xs)  ++ ")"
@@ -180,11 +188,22 @@ translation:: Point t => [Double] -> Kd2nTree t -> Kd2nTree t
 translation l a = (fmap (ptrans l) a )  
 
 
---instance Monad Kd2nTree where 
---kfilter::Point p=> (p->Bool)-> Kd2nTree p -> Kd2nTree p
---kfilter f Empty = Empty 
---kfilter f (Node a l t)
---	| f a	= build  ( [(a,f) ++ kfilter f t])
---	| not(f a) = build concatMap( (kfilter) t f)     
---idea 1 es fer funcio auxiliar passant f i passar tot el node i si el punt lo cumple també passes la seva llista 
--- gotta think a way to implement it with Monads
+instance Applicative Kd2nTree where
+    pure = return
+    (<*>) = ap 
+
+
+instance Monad Kd2nTree where 
+    return a = Node a [] []
+    Empty >>= f = Empty
+    (Node p l fills) >>= f  = f p
+
+kfilter::Point p=> (p->Bool)-> Kd2nTree p -> Kd2nTree p
+kfilter f Empty = Empty 
+kfilter f (Node a l h) = do
+         if(f a) 
+                then foldl (unio) (build [(a,l)]) (map (kfilter f) h)
+         else do foldl (unio) Empty (map (kfilter f) h)
+   
+unio:: Point p=> Kd2nTree p -> Kd2nTree p -> Kd2nTree p
+unio t1 t2 =  build ((get_all t1) ++ (get_all t2))
