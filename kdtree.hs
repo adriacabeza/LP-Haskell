@@ -135,6 +135,8 @@ contains (Node a l f) p = (a==p) || contains (f !! (child a p l)) p
 exampleSet :: Kd2nTree Point3d 
 exampleSet = build [(Point3d[3.0,-1.0,2.1],[1,3]),(Point3d[3.5,2.8,3.1],[1,2]),(Point3d[3.5,0.0,2.1],[3]),(Point3d[3.0,-1.7,3.1],[1,2,3]), (Point3d[3.0,5.1,0.0],[2]),(Point3d[1.5,8.0,1.5],[1]),(Point3d[3.3,2.8,2.5],[3]),(Point3d[4.0,5.1,3.8],[2]), (Point3d[3.1,3.8,4.8],[1,3]),(Point3d[1.8,1.1,-2.0],[1,2])]
 
+arbrebuit :: Kd2nTree Point3d
+arbrebuit = Empty
 
 exampleSet2 :: Kd2nTree Point3d
 exampleSet2 = buildIni [([3.0,-1.0,2.1],[1,3]),([3.5,2.8,3.1],[1,2]),([3.5,0.0,2.1],[3]),([3.0,-1.7,3.1],[1,2,3]), ([3.0,5.1,0.0],[2]),([1.5,8.0,1.5],[1]),([3.3,2.8,2.5],[3]),([4.0,5.1,3.8],[2]), ([3.1,3.8,4.8],[1,3]),([1.8,1.1,-2.0],[1,2])] 
@@ -199,10 +201,10 @@ instance Monad Kd2nTree where
     (Node p l fills) >>= f  = f p
 
 kfilter::Point p=> (p->Bool)-> Kd2nTree p -> Kd2nTree p
-kfilter f Empty = Empty 
+-- kfilter f Empty = Empty 
 kfilter f (Node a l h) = do
          if(f a) 
-                then foldl (unio) (build [(a,l)]) (map (kfilter f) h)
+                then foldl (unio) (insert Empty a l) (map (kfilter f) h)
          else do foldl (unio) Empty (map (kfilter f) h)
    
 unio:: Point p=> Kd2nTree p -> Kd2nTree p -> Kd2nTree p
