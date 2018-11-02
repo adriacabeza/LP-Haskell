@@ -34,8 +34,24 @@ inOrder Empty = []
 inOrder (Node a l r)= (inOrder l) ++[a]++ (inOrder r)
 
 
---breadthFirst :: Tree a -> [a]
+bfs [] = []
+bfs (Empty:xs) = bfs xs
+bfs ((Node x l r):xs) = x : (bfs $ xs ++ [l,r])
 
--- build :: Eq a => [a] -> [a] -> Tree a
+breadthFirst :: Tree a -> [a]
+breadthFirst t = bfs [t]
 
--- overlap :: (a -> a -> a) -> Tree a -> Tree a -> Tree a
+
+
+build :: Eq a => [a] -> [a] -> Tree a
+build [][] = Empty
+build (pp:pf) inordre = Node pp (build  lp li) (build rp ri)
+        where(li,_:ri) = span (/=pp) inordre
+             (lp,rp) = splitAt (length li) pf
+
+
+overlap :: (a -> a -> a) -> Tree a -> Tree a -> Tree a
+overlap _ Empty Empty = Empty
+overlap _ Empty a = a 
+overlap  _ b Empty = b 
+overlap f (Node a l r) (Node b m t) = Node (f a b) (overlap f l m) (overlap f r t)
