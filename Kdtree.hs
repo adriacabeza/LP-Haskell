@@ -25,12 +25,12 @@ data Point3d = Point3d [Double]
 
 instance Point Point3d where
 
-    sel coord (Point3d p1) = p1 !! coord
-    
+    sel coord (Point3d p1) = p1 !! (coord-1)
+
     dim _ = 3
 
     comp n1 n2 x
-        | (sel (x-1) n1) >= (sel (x-1) n2)  =0
+        | (sel (x) n1) >= (sel (x) n2)  =0
         | otherwise =1
 
     child e1 e2 l = binarytoNum  $ map (comp e1 e2) l
@@ -111,7 +111,6 @@ get_all (Node a l []) = [(a,l)]
 get_all (Node a l (f:fs)) = get_all(f) ++ get_all(Node a l fs)
 
 
-
 --Exercici6
 
 remove :: (Point p,Eq p) => Kd2nTree p ->p -> Kd2nTree p 
@@ -152,7 +151,7 @@ allinInterval:: Point p => Kd2nTree p -> p -> p -> [p]
 allinInterval t pmin pmax =  filter (interval pmin pmax) (map (fst) (get_all t))
         where 
         interval:: Point p => p -> p -> p-> Bool
-        interval pmin pmax punt = (compara pmin punt 0) && (compara punt pmax 0)
+        interval pmin pmax punt = (compara pmin punt 1) && (compara punt pmax 1)
                 
 
 
@@ -179,24 +178,33 @@ instance Monad Kd2nTree where
     Empty >>= f = Empty
     (Node p l fills) >>= f  = f p
 
-kfilter::Point p=> (p->Bool)-> Kd2nTree p -> Kd2nTree p
-kfilter f Empty = Empty 
-kfilter f (Node a l h) = 
-         if(f a) 
-                then foldl (unio) (insert Empty a l) (map (kfilter f) h)
-         else do foldl (unio) Empty (map (kfilter f) h)
-      
+kfilter::Point p =>(p->Bool)-> Kd2nTree p -> Kd2nTree p
+kfilter f Empty = Empty
+kfilter f (Node r l ps)= if (f r) then Node r l (do 
+                                                (Node r1 l1 ps1) <- ps
+                                                if (f r1) then [Node r1 l1 [kfilter f c | c<-ps1]]
+                                                else [])
+                        else foldl (unio) Empty (map (kfilter f) ps)
+
+
+-- OPCIÓ 2, no fa servir mònades
+-- kfilter f Empty = Empty 
+-- kfilter f (Node a l h) = 
+--          if(f a) 
+--                 then foldl (unio) (insert Empty a l) (map (kfilter f) h)
+--          else do foldl (unio) Empty (map (kfilter f) h)
+
+--funció de prova per veure si funciona la instància mònade
+kfilterNode :: (b -> Bool) -> Kd2nTree b -> Kd2nTree b
+kfilterNode fb kt@(Node n l h) = do
+    p <- kt
+    if fb p then Node n l []
+    else Empty       
 
 unio:: Point p=> Kd2nTree p -> Kd2nTree p -> Kd2nTree p
 -- unio t1 t2 =  build ((get_all t1) ++ (get_all t2))
--- unio t1 t2 =  insert' t1 (get_all t2) 
-unio Empty t2 = t2
-unio (Node a b []) t2 =  Node a b [t2]
-unio (Node a l f) (Node b l2 h) = Node a l (m ++  [unio (last t) (Node b l2 h)]  ++ (drop (n+1) f))
-    where
-        n = (child a b l)
-        m = take n f
-        t = take (n+1) f
+unio t1 t2 =  insert' t1 (get_all t2) 
+
 
 
 --AUXILIARS

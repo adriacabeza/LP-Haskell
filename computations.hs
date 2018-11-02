@@ -1,28 +1,50 @@
+-- get sum of multiples of a number
+sumMultiples :: Integer -> Integer -> Integer
+sumMultiples n f = f * n1 * (n1 + 1) `div` 2 
+  where n1 = (n - 1) `div` f
 
-ismultiple3or5::Integer->Bool
-ismultiple3or5 n 
-    | (mod n 3 ==0)     =True
-    | (mod n 5 == 0)    = True
-    | otherwise = False 
 
+-- 
 sumMultiples35 :: Integer -> Integer
-sumMultiples35 n =  sum (filter (ismultiple3or5) [1..(n-1)])
+sumMultiples35 n = sumMultiples n 3 + sumMultiples n 5 - sumMultiples n 15
+
+
+
+
+-- fibonaccio
+fibs :: [Integer]
+fibs = map fst $ iterate (\(a,b) -> (b,a+b)) (0,1)
 
 fibonacci :: Int -> Integer
-fibonacci n 
-    | n == 0    = 0
-    | n == 1    =1
-    | otherwise = fibonacci(n-1) + fibonacci(n-2)
+fibonacci n = fibs !! n
 
 
 
-fib :: [Integer]
-fib = 0:1:zipWith (+) fib (tail fib)
-
-
+-- sum even fibonaccis
 sumEvenFibonaccis :: Integer -> Integer
-sumEvenFibonaccis n = sum (filter (even) (filter (<n) (take (fromInteger n) fib)))
+sumEvenFibonaccis n = foldl1 (+) $ filter even $ takeWhile (<n) fibs
 
--- largestPrimeFactor :: Int -> Int
 
--- isPalindromic :: Integer -> Bool
+
+-- largest prime factor
+
+primes = 2 : 3 : filter ((==1).length.primeFactors) [5,7..]
+
+primeFactors n = factor n primes
+  where factor n (p:ps)
+          | p*p>n = [n]
+          | mod n p == 0 = p : factor (div n p) (p:ps)
+          | otherwise      = factor n ps
+
+largestPrimeFactor :: Int -> Int
+largestPrimeFactor n = last $ primeFactors n
+
+
+
+-- palindromic
+isPalindromic :: Integer -> Bool
+isPalindromic n = all (==True) $ zipWith (==) l (reverse l)
+  where l = show n
+
+
+
