@@ -9,8 +9,6 @@ testsKdtree = TestList [TestLabel "insert" testInsert, TestLabel "remove" testRe
 -- runTestTT testsKdtree -> to run KdTree tests 
 
 
-
-
 -- remove :: (Point p,Eq p) => Kd2nTree p ->p -> Kd2nTree p 
 expected1 = Node (Point3d[3.0,-1.0,2.1]) [1,3] [Node (Point3d[1.8,1.1,-2.0]) [1,2] [Empty,Node (Point3d[1.5,8.0,1.5]) [1] [Empty,Empty],Empty,Empty],Node (Point3d[3.0,-1.7,3.1]) [1,2,3] [Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty],Node (Point3d[3.5,0.0,2.1]) [3] [Empty,Empty],Node (Point3d[3.5,2.8,3.1]) [1,2] [Node (Point3d[3.3,2.8,2.5]) [3] [Empty,Empty],Node (Point3d[3.1,3.8,4.8]) [1,3] [Empty,Empty,Empty,Empty],Empty,Node (Point3d[4.0,5.1,3.8]) [2] [Empty,Empty]]]
 testRemove = TestCase (assertEqual "Fem el remove d'un punt d'exampleSet" expected1 (remove exampleSet (Point3d [3.0,5.1,0.0])))
