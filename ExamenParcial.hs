@@ -43,24 +43,33 @@ myIterate :: (a -> a) -> a -> [a]
 myIterate f i = scanl (\x y -> y x) i (repeat f)
 
 
-data Expr a = Val a | Var String | Sum (Expr a) (Expr a) | Sub (Expr a) (Expr a) | Mul (Expr a) (Exprt a)
-    deriving show 
+data Expr a
+    = Val a
+    | Var String
+    | Sum (Expr a) (Expr a)
+    | Sub (Expr a) (Expr a)
+    | Mul (Expr a) (Expr a)
+    deriving Show
 
 eval:: (Num a) => SymTab a-> Expr a -> Maybe a
-eval st (Val a) = do    
-    s<-st
+eval st (Val n) = Just n
 
-eval st (Var a) = do
-    s<-st
+eval st (Var x) = st x
 
-eval st (Sum a b) = do
-    s<- st
+eval st (Sum n n2) = do
+    a1<- eval st n
+    b1<-eval st n2
+    return $ a1 + b1
 
-eval st (Sub a b) = do
-    s<-st
+eval st (Sub n n2) = do
+    a1<-eval st n
+    b1<-eval st n2
+    return $ a1 - b1 
+    
 
-eval st (Mul a b) = do
-    s<-st
-
+eval st (Mul n n2) = do
+    a1<-eval st n
+    b1<-eval st n2
+    return $ a1 * b1 
 
                 
