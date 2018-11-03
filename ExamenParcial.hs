@@ -35,4 +35,32 @@ set st k v x
     | k == x =Just v  
     | otherwise =st x
 
--- myIterate :: (a -> a) -> a -> [a]
+
+
+myIterate :: (a -> a) -> a -> [a] 
+-- myIterate f x = scanl (const.f) x (repeat x)
+-- myIterate f i = scanl (flip ($)) i (repeat f)
+myIterate f i = scanl (\x y -> y x) i (repeat f)
+
+
+data Expr a = Val a | Var String | Sum (Expr a) (Expr a) | Sub (Expr a) (Expr a) | Mul (Expr a) (Exprt a)
+    deriving show 
+
+eval:: (Num a) => SymTab a-> Expr a -> Maybe a
+eval st (Val a) = do    
+    s<-st
+
+eval st (Var a) = do
+    s<-st
+
+eval st (Sum a b) = do
+    s<- st
+
+eval st (Sub a b) = do
+    s<-st
+
+eval st (Mul a b) = do
+    s<-st
+
+
+                

@@ -1,4 +1,4 @@
-module Kdtree where    
+module Kd2ntree where    
 import Control.Applicative
 import Control.Monad
 
@@ -64,14 +64,14 @@ instance (Point a, Eq a) => Eq (Kd2nTree a) where
 
 instance Show a => Show (Kd2nTree a) where
     show Empty = ""
-    show (Node a l f) = show(a) ++ show(l) ++ "\n"++ (show2 f 0 0)  
+    show (Node a l f) = show(a) ++ show(l) ++ (show2 f 0 0)  
 
    
 show2:: Show a => [Kd2nTree a] -> Int -> Int -> String
 show2 [] _  _= ""
 show2 (Empty:as) x tabs= (show2 as (x+1) tabs)
-show2 ((Node a l f):as) x tabs= " " ++ concat(replicate tabs "     ")  ++ "<" ++ (show x) ++ "> "  
-                                ++ (show a) ++ " " ++ (show l)  ++ "\n"
+show2 ((Node a l f):as) x tabs= "\n" ++ " " ++ concat(replicate tabs "     ")  ++ "<" ++ (show x) ++ "> "  
+                                ++ (show a) ++ " " ++ (show l) 
                                 ++ (show2 f 0 (tabs+1))  ++ (show2 as (x+1) tabs)
 
 
@@ -170,13 +170,19 @@ translation l a = (fmap (ptrans l) a )
 
 instance Applicative Kd2nTree where
     pure = return
-    (<*>) = ap 
+    (<*>) Empty _ =  Empty
+    (<*>) _ Empty  = Empty
+    (<*>) (Node f l h) (Node a m g) = Node (f a) l $ zipWith (<*>) h g
 
 
 instance Monad Kd2nTree where 
     return a = Node a [] []
     Empty >>= f = Empty
-    (Node p l fills) >>= f  = f p
+    (Node p l h) >>= f = f'(f p)
+                where f' (Node p2 _ _) = (Node p2 l $ map (>>= f) h)
+    -- (Node p l fills) >>= f  = f p AQUESTA LÍNIA
+    
+
 
 kfilter::Point p =>(p->Bool)-> Kd2nTree p -> Kd2nTree p
 kfilter f Empty = Empty
@@ -194,16 +200,20 @@ kfilter f (Node r l ps)= if (f r) then Node r l (do
 --                 then foldl (unio) (insert Empty a l) (map (kfilter f) h)
 --          else do foldl (unio) Empty (map (kfilter f) h)
 
+
+
 --funció de prova per veure si funciona la instància mònade
-kfilterNode :: (b -> Bool) -> Kd2nTree b -> Kd2nTree b
-kfilterNode fb kt@(Node n l h) = do
-    p <- kt
-    if fb p then Node n l []
-    else Empty       
+-- kfilterNode :: (b -> Bool) -> Kd2nTree b -> Kd2nTree b
+-- kfilterNode fb kt@(Node n l h) = do
+--     p <- kt
+--     if fb p then Node n l []
+--     else Empty       
+
+
 
 unio:: Point p=> Kd2nTree p -> Kd2nTree p -> Kd2nTree p
 -- unio t1 t2 =  build ((get_all t1) ++ (get_all t2))
-unio t1 t2 =  insert' t1 (get_all t2) 
+unio t1 t2 =  insert' t1 $ get_all t2
 
 
 

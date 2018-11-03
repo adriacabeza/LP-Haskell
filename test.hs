@@ -1,6 +1,6 @@
 module Test where
 import Test.HUnit
-import Kdtree
+import Kd2ntree
 --author: Adrià Cabeza 
 
 testsKdtree = TestList [TestLabel "insert" testInsert, TestLabel "remove" testRemove,TestLabel "translate" testTranslate, TestLabel "Nearest" testNearest, TestLabel "AllInInterval" testAllInterval,
@@ -54,6 +54,6 @@ testBuild = TestCase (assertEqual "Build d'ExampleSet" expected9 (build ([(Point
 
 -- buildIni :: Point p =>[([Double],[Int])]-> Kd2nTree p
 expected10 = Node (Point3d[3.0,-1.0,2.1]) [1,3] [Node (Point3d[3.0,5.1,0.0]) [2] [Node (Point3d[1.8,1.1,-2.0]) [1,2] [Empty,Empty,Empty,Empty],Node (Point3d[1.5,8.0,1.5]) [1] [Empty,Empty]],Node (Point3d[3.0,-1.7,3.1]) [1,2,3] [Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty],Node (Point3d[3.5,0.0,2.1]) [3] [Empty,Empty],Node (Point3d[3.5,2.8,3.1]) [1,2] [Node (Point3d[3.3,2.8,2.5]) [3] [Empty,Empty],Node (Point3d[3.1,3.8,4.8]) [1,3] [Empty,Empty,Empty,Empty],Empty,Node (Point3d[4.0,5.1,3.8]) [2] [Empty,Empty]]]
-testBuildIni = TestCase (assertEqual "Build d'ExampleSet" expected10 (buildIni [([3.0,-1.0,2.1],[1,3]),([3.5,2.8,3.1],[1,2]),([3.5,0.0,2.1],[3]),([3.0,-1.7,3.1],[1,2,3]), ([3.0,5.1,0.0],[2]),([1.5,8.0,1.5],[1]),([3.3,2.8,2.5],[3]),([4.0,5.1,3.8],[2]), ([3.1,3.8,4.8],[1,3]),([1.8,1.1,-2.0],[1,2])] ))
+testBuildIni = TestCase (assertEqual "BuildIni d'ExampleSet" expected10 (buildIni [([3.0,-1.0,2.1],[1,3]),([3.5,2.8,3.1],[1,2]),([3.5,0.0,2.1],[3]),([3.0,-1.7,3.1],[1,2,3]), ([3.0,5.1,0.0],[2]),([1.5,8.0,1.5],[1]),([3.3,2.8,2.5],[3]),([4.0,5.1,3.8],[2]), ([3.1,3.8,4.8],[1,3]),([1.8,1.1,-2.0],[1,2])] ))
 
 
