@@ -24,6 +24,7 @@ eval2 :: String -> Int
 eval2 expr = evalCalc2 reverse(stack) []
   where stack = words expr
 
+  --acabar
 evalCalc2 :: Char -> [String] -> Int
 evalCalc2 op expr = foldl (evalCalc2)   
     where a = head expr
