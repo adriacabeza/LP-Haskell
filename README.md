@@ -19,4 +19,4 @@ En aquest repositori trobareu la majoria de problemes de Haskell de l'assignatur
 - FizzBuzz
 
 ### Pràctica
-A més també hi ha una carpeta amb la pràctica: **Kd2nTrees**, l'enunciat i un arxiu de testing que vaig crear per comparar amb els colegues els diferents resultats. 
+A més també hi ha una carpeta amb la pràctica: **Kd2nTrees**, l'enunciat i un arxiu de testing que vaig crear per comparar amb els colegues els diferents resultats. Si veieu quelcom malament o us molaria participar en el repo feel free de fer Pull Request :blush:
