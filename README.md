@@ -1,4 +1,5 @@
 # LP-Haskell
+[![HitCount](http://hits.dwyl.io/adriacabeza/https://github.com/adriacabeza/LP-Haskell.svg)](http://hits.dwyl.io/adriacabeza/https://github.com/adriacabeza/LP-Haskell)
 ### Exercicis
 En aquest repositori trobareu la majoria de problemes de Haskell de l'assignatura d'LP de la FIB:
 - Binary Tree 
